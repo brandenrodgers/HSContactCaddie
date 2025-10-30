@@ -4,6 +4,7 @@ on:
       - main
     paths:
       - 'hs-contact-caddie/**'
+      - '.github/workflows/**'
 env:
   DEFAULT_ACCOUNT_ID: ${{ secrets.HUBSPOT_ACCOUNT_ID }}
   DEFAULT_PERSONAL_ACCESS_KEY: ${{ secrets.HUBSPOT_PERSONAL_ACCESS_KEY }}
