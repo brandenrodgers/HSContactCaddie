@@ -1,0 +1,12 @@
+{
+  "uid": "card-hs-contact-caddie",
+  "type": "card",
+  "config": {
+    "name": "Contact Caddie",
+    "location": "crm.record.tab",
+    "entrypoint": "/app/cards/ContactCaddie.tsx",
+    "objectTypes": [
+      "contacts"
+    ]
+  }
+}
