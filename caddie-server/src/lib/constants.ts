@@ -1,0 +1,4 @@
+export const GRANT_TYPES = {
+  AUTHORIZATION_CODE: 'authorization_code',
+  REFRESH_TOKEN: 'refresh_token',
+};

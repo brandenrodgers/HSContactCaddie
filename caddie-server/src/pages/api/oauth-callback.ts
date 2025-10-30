@@ -1,12 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Client } from '@hubspot/api-client';
+import { GRANT_TYPES } from '@/lib/constants';
 
-const GRANT_TYPES = {
-  AUTHORIZATION_CODE: 'authorization_code',
-  REFRESH_TOKEN: 'refresh_token',
-};
-
-const REDIRECT_URI = `${process.env.DOMAIN}/api/oauth-callback`;
 const CLIENT_ID = process.env.HUBSPOT_CLIENT_ID;
 const CLIENT_SECRET = process.env.HUBSPOT_CLIENT_SECRET;
 
@@ -36,12 +31,18 @@ export default async function handler(
     });
   }
 
+  // Dynamically construct the redirect URI from the request headers so it works with Vercel and local development
+  const protocol = req.headers['x-forwarded-proto'] || 'http';
+  const host = req.headers.host;
+  const redirectUri = `${protocol}://${host}/api/oauth-callback`;
+
   console.log('Retrieving access token by code:', code);
+  console.log('Using redirect URI:', redirectUri);
 
   const getTokensResponse = await hubspotClient.oauth.tokensApi.create(
     GRANT_TYPES.AUTHORIZATION_CODE,
     code,
-    REDIRECT_URI,
+    redirectUri,
     CLIENT_ID,
     CLIENT_SECRET
   );
