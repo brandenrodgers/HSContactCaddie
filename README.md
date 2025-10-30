@@ -13,6 +13,7 @@ A HubSpot app for tracking golf stats on contact records.
 - [Next.js 14](https://nextjs.org/)
 - React framework with API routes
 - TypeScript
+- [Vercel Redis](https://vercel.com/docs/storage/vercel-kv) for token storage
 - Handles OAuth 2.0 authentication flow
 
 

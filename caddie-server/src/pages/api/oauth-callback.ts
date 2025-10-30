@@ -1,18 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Client } from '@hubspot/api-client';
 import { GRANT_TYPES } from '@/lib/constants';
+import { storeTokens } from '@/lib/tokenStore';
 
 const CLIENT_ID = process.env.HUBSPOT_CLIENT_ID;
 const CLIENT_SECRET = process.env.HUBSPOT_CLIENT_SECRET;
 
 type ResponseData = {
   message: string;
+  portalId?: string;
   error?: string;
 };
 
-const hubspotClient = new Client({
-  // basePath: 'https://api.hubapiqa.com', (override for QA environment)
-});
+const hubspotClient = new Client();
 
 export default async function handler(
   req: NextApiRequest,
@@ -31,31 +31,50 @@ export default async function handler(
     });
   }
 
-  // Dynamically construct the redirect URI from the request headers so it works with Vercel and local development
-  const protocol = req.headers['x-forwarded-proto'] || 'http';
-  const host = req.headers.host;
-  const redirectUri = `${protocol}://${host}/api/oauth-callback`;
+  try {
+    // Dynamically construct the redirect URI from the request headers so it works with Vercel and local development
+    const protocol = req.headers['x-forwarded-proto'] || 'http';
+    const host = req.headers.host;
+    const redirectUri = `${protocol}://${host}/api/oauth-callback`;
 
-  console.log('Retrieving access token by code:', code);
-  console.log('Using redirect URI:', redirectUri);
+    console.log('Retrieving access token by code:', code);
+    console.log('Using redirect URI:', redirectUri);
 
-  const getTokensResponse = await hubspotClient.oauth.tokensApi.create(
-    GRANT_TYPES.AUTHORIZATION_CODE,
-    code,
-    redirectUri,
-    CLIENT_ID,
-    CLIENT_SECRET
-  );
+    const getTokensResponse = await hubspotClient.oauth.tokensApi.create(
+      GRANT_TYPES.AUTHORIZATION_CODE,
+      code,
+      redirectUri,
+      CLIENT_ID,
+      CLIENT_SECRET
+    );
 
-  console.log('Retrieving access token result:', getTokensResponse);
+    console.log('Token exchange successful');
 
+    // Get the access token info to retrieve the portal ID
+    hubspotClient.setAccessToken(getTokensResponse.accessToken);
+    const tokenInfo = await hubspotClient.oauth.accessTokensApi.get(
+      getTokensResponse.accessToken
+    );
 
-  // Set token for the
-  // https://www.npmjs.com/package/@hubspot/api-client
-  hubspotClient.setAccessToken(getTokensResponse.accessToken);
+    const portalId = tokenInfo.hubId.toString();
+    console.log(`Storing tokens for portal ${portalId}`);
 
-  return res.status(200).json({
-    message: 'OAuth callback received (stub implementation)'
-  });
+    // Store tokens in Vercel KV
+    await storeTokens(portalId, {
+      accessToken: getTokensResponse.accessToken,
+      refreshToken: getTokensResponse.refreshToken,
+      expiresIn: getTokensResponse.expiresIn,
+    });
+
+    console.log(`OAuth flow completed successfully for portal ${portalId}`);
+
+    return res.redirect('/oauth-success');
+  } catch (error) {
+    console.error('OAuth callback error:', error);
+    return res.status(500).json({
+      message: 'OAuth authorization failed',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
 }
 
