@@ -18,4 +18,6 @@ jobs:
       - name: HubSpot Project Action
         uses: HubSpot/hubspot-project-actions@v1.0.0
         with:
+          proiject_dir: hs-contact-caddie
           profile: prod
+
