@@ -1,12 +1,11 @@
-# Contact Caddie
+# Contact Caddie ⛳️
 
 A HubSpot app for tracking golf stats on contact records.
 
 ## Tech Stack
 
 **HubSpot App** (`hs-contact-caddie/`)
-- [HubSpot UI Extensions](https://developers.hubspot.com/docs/platform/ui-extensions-overview) - React-based component framework for building HubSpot apps
-- [CRM Cards](https://developers.hubspot.com/docs/platform/ui-components-overview) - Custom UI components that appear on CRM records
+- [CRM Cards](https://developers.hubspot.com/docs/apps/developer-platform/add-features/ui-extensibility/app-cards/overview)
 - TypeScript & React 18
 - HubSpot Platform Version: 2025.2
 

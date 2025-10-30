@@ -1,12 +1,22 @@
 import React from "react";
 import { EmptyState, Link, Text } from "@hubspot/ui-extensions";
 import { hubspot } from "@hubspot/ui-extensions";
+import { ENVIRONMENTS } from './constants';
 
 hubspot.extend(({ context }) => <Extension context={context} />);
 
 const Extension = ({ context }) => {
 
-  console.log({context});
+  const renderEnvironment = () => {
+    switch (context.variables.ENV) {
+      case ENVIRONMENTS.DEVELOPMENT:
+        return <Text>Development Environment</Text>;
+      case ENVIRONMENTS.PRODUCTION:
+      default:
+        return <Text>Production Environment</Text>;
+
+    }
+  };
 
   return (
     <>
@@ -18,6 +28,7 @@ const Extension = ({ context }) => {
         <Text>
           Contact Caddie is a golf stats app for HubSpot contacts.
         </Text>
+        {renderEnvironment()}
       </EmptyState>
     </>
   );

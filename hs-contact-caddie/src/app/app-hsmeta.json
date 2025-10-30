@@ -19,7 +19,7 @@
       "conditionallyRequiredScopes": []
     },
     "permittedUrls": {
-      "fetch": [ "${DOMAIN}/api" ],
+      "fetch": [],
       "iframe": [],
       "img": []
     },
