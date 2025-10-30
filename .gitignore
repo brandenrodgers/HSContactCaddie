@@ -10,6 +10,7 @@ coverage/
 .next/
 out/
 build/
+dist/
 
 # Environment variables
 .env
@@ -21,6 +22,9 @@ build/
 
 # Vercel
 .vercel
+
+# Vite
+.vite
 
 # Debug logs
 npm-debug.log*
