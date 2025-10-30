@@ -13,13 +13,17 @@
       "requiredScopes": [
         "oauth",
         "crm.objects.contacts.read",
-        "crm.objects.contacts.write"
+        "crm.objects.contacts.write",
+        "crm.objects.custom.read",
+        "crm.objects.custom.write"
       ],
       "optionalScopes": [],
       "conditionallyRequiredScopes": []
     },
     "permittedUrls": {
-      "fetch": [],
+      "fetch": [
+        "https://api.hubapi.com"
+      ],
       "iframe": [],
       "img": []
     },
