@@ -1,15 +1,29 @@
 import React, { useState } from "react";
 import { Box, Button, Flex, Form, Input, DateInput, NumberInput, Text } from "@hubspot/ui-extensions";
+import { GolfRoundProperties } from "./types";
 
 interface GolfRoundFormProps {
-  onSubmit: (data: { course: string; score: number; date: string }) => void;
+  onSubmit: (data: GolfRoundProperties) => void;
   isSubmitting?: boolean;
+}
+
+interface DateValue {
+  year: number;
+  month: number;
+  date: number;
 }
 
 export const GolfRoundForm = ({ onSubmit, isSubmitting = false }: GolfRoundFormProps) => {
   const [course, setCourse] = useState("");
   const [score, setScore] = useState<number | undefined>(undefined);
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState<DateValue | undefined>(undefined);
+
+  const convertDateToString = (dateValue: DateValue): string => {
+    const year = dateValue.year;
+    const month = String(dateValue.month).padStart(2, '0');
+    const day = String(dateValue.date).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   const handleSubmit = () => {
     if (!course || score === undefined || !date) {
@@ -19,15 +33,15 @@ export const GolfRoundForm = ({ onSubmit, isSubmitting = false }: GolfRoundFormP
     onSubmit({
       course,
       score,
-      date,
+      date: convertDateToString(date),
     });
 
     setCourse("");
     setScore(undefined);
-    setDate("");
+    setDate(undefined);
   };
 
-  const isValid = course.trim() !== "" && score !== undefined && score > 0 && date !== "";
+  const isValid = course.trim() !== "" && score !== undefined && score > 0 && date !== undefined;
 
   return (
     <Form>
