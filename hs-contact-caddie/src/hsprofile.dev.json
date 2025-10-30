@@ -1,0 +1,7 @@
+{
+  "accountId": 50651619,
+  "variables": {
+    "ENV": "development",
+    "DOMAIN": "http://localhost:3000"
+  }
+}
