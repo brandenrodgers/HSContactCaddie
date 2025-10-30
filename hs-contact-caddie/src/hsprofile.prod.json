@@ -2,6 +2,6 @@
   "accountId": 44625870,
   "variables": {
     "ENV": "production",
-    "DOMAIN": "https://contact-caddie.vercel.app"
+    "DOMAIN": "https://hs-contact-caddie.vercel.app"
   }
 }
