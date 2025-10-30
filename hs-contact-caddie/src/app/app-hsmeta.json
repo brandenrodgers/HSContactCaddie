@@ -8,7 +8,7 @@
     "auth": {
       "type": "oauth",
       "redirectUrls": [
-        "http://localhost:3000/oauth-callback"
+        "${DOMAIN}/api/oauth-callback"
       ],
       "requiredScopes": [
         "oauth",
@@ -19,9 +19,7 @@
       "conditionallyRequiredScopes": []
     },
     "permittedUrls": {
-      "fetch": [
-        "https://api.hubapi.com"
-      ],
+      "fetch": [ "${DOMAIN}/api" ],
       "iframe": [],
       "img": []
     },
