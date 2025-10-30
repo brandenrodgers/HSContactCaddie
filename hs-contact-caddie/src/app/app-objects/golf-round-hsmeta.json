@@ -1,0 +1,45 @@
+{
+  "uid": "golf-round-app-object",
+  "type": "app-object",
+  "config": {
+    "name": "GOLF_ROUND",
+    "appPrefix": "Contact Caddie",
+    "description": "A golf round played by a contact",
+    "singularForm": "Golf Round",
+    "pluralForm": "Golf Rounds",
+    "primaryDisplayLabelPropertyName": "course",
+    "secondaryDisplayLabelPropertyNames": [
+      "score",
+      "date"
+    ],
+    "settings": {
+      "hasRecordPage": true,
+      "allowsUserCreatedRecords": true,
+      "hasEngagements": false
+    },
+    "properties": [
+      {
+        "type": "string",
+        "fieldType": "text",
+        "name": "course",
+        "label": "Course",
+        "description": "The name of the golf course"
+      },
+      {
+        "type": "number",
+        "fieldType": "number",
+        "name": "score",
+        "label": "Score",
+        "description": "The numerical golf score"
+      },
+      {
+        "type": "date",
+        "fieldType": "date",
+        "name": "date",
+        "label": "Date",
+        "description": "The day the round was played"
+      }
+    ]
+  }
+}
+

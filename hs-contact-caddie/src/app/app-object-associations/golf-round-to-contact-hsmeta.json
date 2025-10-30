@@ -1,0 +1,20 @@
+{
+  "uid": "golf_round_to_contact_association",
+  "type": "app-object-association",
+  "config": {
+    "firstObjectType": "golf-round-app-object",
+    "secondObjectType": "CONTACT",
+    "firstToSecondBaseLimit": 1,
+    "secondToFirstBaseLimit": 1000,
+    "labels": [
+      {
+        "name": "player",
+        "firstObjectTypeLabel": "Round",
+        "secondObjectTypeLabel": "Player",
+        "firstToSecondLabelLimit": 1,
+        "secondToFirstLabelLimit": 1000
+      }
+    ]
+  }
+}
+
