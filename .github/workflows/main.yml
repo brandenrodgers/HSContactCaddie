@@ -7,7 +7,7 @@ on:
 env:
   DEFAULT_ACCOUNT_ID: ${{ secrets.HUBSPOT_ACCOUNT_ID }}
   DEFAULT_PERSONAL_ACCESS_KEY: ${{ secrets.HUBSPOT_PERSONAL_ACCESS_KEY }}
-  DEFAULT_CLI_VERSION: 7.9.0
+  DEFAULT_CLI_VERSION: 7.8.0
 jobs:
   deploy:
     runs-on: ubuntu-latest
