@@ -4,3 +4,6 @@ export const GRANT_TYPES = {
 } as const;
 
 export const TOKEN_REFRESH_BUFFER_MS = 5 * 60 * 1000; // 5 minutes before expiry
+
+export const GOLF_ROUND_OBJECT_TYPE = 'a23034755_GOLF_ROUND';
+export const GOLF_ROUND_OBJECT_TYPE_ID = '2-7893385';
