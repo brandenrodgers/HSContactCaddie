@@ -1,0 +1,5 @@
+{
+  "proxy": {
+    "https://api.hubapi.com": "http://localhost:3000"
+  }
+}

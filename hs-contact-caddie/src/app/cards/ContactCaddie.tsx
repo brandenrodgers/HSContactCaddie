@@ -29,6 +29,7 @@ const Extension = ({ context, sendAlert }: any) => {
   const [error, setError] = useState<string | null>(null);
 
   const contactId = context.crm.objectId;
+  const portalId = context.portal.id;
 
   useEffect(() => {
     fetchGolfRounds();
@@ -38,7 +39,7 @@ const Extension = ({ context, sendAlert }: any) => {
     try {
       setLoading(true);
       setError(null);
-      const rounds = await fetchContactGolfRounds(contactId);
+      const rounds = await fetchContactGolfRounds(portalId, contactId);
       setGolfRounds(rounds);
     } catch (err) {
       setError(err.message);
@@ -60,7 +61,7 @@ const Extension = ({ context, sendAlert }: any) => {
   }) => {
     try {
       setIsSubmitting(true);
-      await createGolfRound(contactId, formData);
+      await createGolfRound(portalId, contactId, formData);
       sendAlert({
         type: "success",
         title: "Golf Round Recorded",

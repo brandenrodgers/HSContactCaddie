@@ -4,7 +4,7 @@
   "config": {
     "description": "A golf stats app for HubSpot contacts.",
     "name": "Contact Caddie",
-    "distribution": "private",
+    "distribution": "marketplace",
     "auth": {
       "type": "oauth",
       "redirectUrls": [
@@ -15,14 +15,22 @@
         "crm.objects.contacts.read",
         "crm.objects.contacts.write",
         "crm.objects.custom.read",
-        "crm.objects.custom.write"
+        "crm.objects.custom.write",
+        "crm.app.objects.a23034755_golf_round.create",
+        "crm.app.objects.a23034755_golf_round.edit",
+        "crm.app.objects.a23034755_golf_round.view",
+        "crm.app.schemas.a23034755_golf_round.read",
+        "crm.app.objects.a23034755_golf_round.delete",
+        "crm.app.objects.a23034755_golf_round.merge",
+        "crm.app.schemas.a23034755_golf_round.properties.write"
       ],
       "optionalScopes": [],
       "conditionallyRequiredScopes": []
     },
     "permittedUrls": {
       "fetch": [
-        "https://api.hubapi.com"
+        "https://api.hubapi.com",
+        "https://hs-contact-caddie.vercel.app"
       ],
       "iframe": [],
       "img": []
