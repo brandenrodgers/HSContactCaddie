@@ -2,6 +2,8 @@
   "accountId": 50651619,
   "variables": {
     "ENV": "development",
-    "DOMAIN": "http://localhost:3000"
+    "DOMAIN": "http://localhost:3000",
+    "GOLF_ROUND_OBJECT_PREFIX": "a23034755",
+    "GOLF_ROUND_OBJECT_TYPE_ID": "1-7893385"
   }
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
+  Accordion,
   Divider,
   EmptyState,
   Flex,
@@ -14,9 +15,11 @@ import {
   TableRow,
   Text,
 } from "@hubspot/ui-extensions";
+import { useCrmProperties } from "@hubspot/ui-extensions/crm";
 import { GolfRoundForm } from "./GolfRoundForm";
 import { fetchContactGolfRounds, createGolfRound } from "./api";
-import { GolfRound } from "./types";
+import { GolfRound, GolfRoundProperties } from "./types";
+import { Handicap } from './Handicap';
 
 hubspot.extend(({ context, actions }: any) => (
   <Extension context={context} sendAlert={actions.addAlert} />
@@ -27,6 +30,7 @@ const Extension = ({ context, sendAlert }: any) => {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { properties, isLoading: isLoadingProperties } = useCrmProperties(['firstname']);
 
   const contactId = context.crm.objectId;
   const portalId = context.portal.id;
@@ -37,7 +41,6 @@ const Extension = ({ context, sendAlert }: any) => {
 
   const fetchGolfRounds = async () => {
     try {
-      setLoading(true);
       setError(null);
       const rounds = await fetchContactGolfRounds(portalId, contactId);
       setGolfRounds(rounds);
@@ -54,11 +57,7 @@ const Extension = ({ context, sendAlert }: any) => {
     }
   };
 
-  const handleCreateGolfRound = async (formData: {
-    course: string;
-    score: number;
-    date: string;
-  }) => {
+  const handleCreateGolfRound = async (formData: GolfRoundProperties) => {
     try {
       setIsSubmitting(true);
       await createGolfRound(portalId, contactId, formData);
@@ -80,7 +79,7 @@ const Extension = ({ context, sendAlert }: any) => {
     }
   };
 
-  if (loading) {
+  if (loading || isLoadingProperties) {
     return (
       <Flex direction="column" align="center" gap="medium">
         <LoadingSpinner label="Loading golf rounds..." />
@@ -93,8 +92,9 @@ const Extension = ({ context, sendAlert }: any) => {
       <Flex direction="column" gap="medium">
         <Text>Error loading golf rounds. Please try again.</Text>
         <Divider />
-        <Heading>Record a New Round</Heading>
-        <GolfRoundForm onSubmit={handleCreateGolfRound} isSubmitting={isSubmitting} />
+        <Accordion title="Record a New Round">
+          <GolfRoundForm onSubmit={handleCreateGolfRound} isSubmitting={isSubmitting} />
+        </Accordion>
       </Flex>
     );
   }
@@ -117,32 +117,43 @@ const Extension = ({ context, sendAlert }: any) => {
 
   return (
     <Flex direction="column" gap="medium">
-      <Heading>Golf Rounds</Heading>
+      <Handicap golfRounds={golfRounds} firstname={properties.firstname} />
+      <Divider />
+      <Flex direction="row" gap="extra-small" justify="between" align="baseline">
+        <Heading>Golf Rounds</Heading>
+        <Text>Showing the last 20 rounds played</Text>
+      </Flex>
       <Table bordered={true}>
         <TableHead>
           <TableRow>
             <TableHeader>Course</TableHeader>
             <TableHeader>Score</TableHeader>
+            <TableHeader>Holes</TableHeader>
             <TableHeader>Date</TableHeader>
+            <TableHeader>Rating</TableHeader>
+            <TableHeader>Slope</TableHeader>
           </TableRow>
         </TableHead>
         <TableBody>
-          {golfRounds.map((round) => (
+          {golfRounds.slice(0, 20).map((round) => (
             <TableRow key={round.id}>
-              <TableCell>{round.properties.course || "N/A"}</TableCell>
-              <TableCell>{round.properties.score || "N/A"}</TableCell>
+              <TableCell>{round.properties.course}</TableCell>
+              <TableCell>{round.properties.score}</TableCell>
+              <TableCell>{round.properties.holes || "N/A"}</TableCell>
               <TableCell>
                 {round.properties.date
                   ? new Date(round.properties.date).toLocaleDateString()
                   : "N/A"}
               </TableCell>
+              <TableCell>{round.properties.course_rating || "-"}</TableCell>
+              <TableCell>{round.properties.slope || "-"}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      <Divider />
-      <Heading>Record a New Round</Heading>
-      <GolfRoundForm onSubmit={handleCreateGolfRound} isSubmitting={isSubmitting} />
+      <Accordion title="Record a New Round">
+        <GolfRoundForm onSubmit={handleCreateGolfRound} isSubmitting={isSubmitting} />
+      </Accordion>
     </Flex>
   );
 };

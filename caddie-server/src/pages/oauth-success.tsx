@@ -2,7 +2,6 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 
 const OAuthSuccess: NextPage = () => {
-
   return (
     <>
       <Head>
@@ -31,7 +30,8 @@ const OAuthSuccess: NextPage = () => {
           <h1 style={styles.title}>Authentication Successful! ✅</h1>
 
           <p style={styles.description}>
-            Your HubSpot account has been successfully connected to Contact Caddie.
+            Your HubSpot account has been successfully connected to Contact
+            Caddie.
           </p>
 
           <p style={styles.subtext}>
@@ -50,7 +50,8 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f7fafc',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
   },
   main: {
     textAlign: 'center' as const,
@@ -87,4 +88,3 @@ const styles = {
 };
 
 export default OAuthSuccess;
-

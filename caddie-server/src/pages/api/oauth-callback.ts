@@ -27,7 +27,7 @@ export default async function handler(
   if (!code || typeof code !== 'string') {
     return res.status(400).json({
       message: 'Missing authorization code',
-      error: 'No code parameter provided'
+      error: 'No code parameter provided',
     });
   }
 
@@ -77,4 +77,3 @@ export default async function handler(
     });
   }
 }
-

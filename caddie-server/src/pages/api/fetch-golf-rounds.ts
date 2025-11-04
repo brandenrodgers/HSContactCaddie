@@ -1,6 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getAuthorizedHubSpotClient } from '@/lib/tokenStore';
-import { GOLF_ROUND_OBJECT_TYPE, GOLF_ROUND_OBJECT_TYPE_ID } from '@/lib/constants';
+import {
+  GOLF_ROUND_OBJECT_TYPE,
+  GOLF_ROUND_OBJECT_TYPE_ID,
+  APP_OBJECT_PREFIX,
+} from '@/lib/constants';
+import {
+  handleHubSpotError,
+  stripAppObjectPrefix,
+} from '@/lib/hubspotApiUtils';
 
 type ResponseData = {
   message?: string;
@@ -35,7 +43,8 @@ export default async function handler(
 
     if (!hubspotClient) {
       return res.status(401).json({
-        error: 'No valid authorization found for this portal. Please re-authenticate.',
+        error:
+          'No valid authorization found for this portal. Please re-authenticate.',
       });
     }
 
@@ -44,6 +53,14 @@ export default async function handler(
       method: 'GET',
       path: `/crm/v4/objects/contacts/${contactId}/associations/${GOLF_ROUND_OBJECT_TYPE_ID}`,
     });
+
+    if (!associationsResponse.ok) {
+      return await handleHubSpotError(
+        associationsResponse,
+        res,
+        'Fetch golf round associations'
+      );
+    }
 
     const associationsData = await associationsResponse.json();
 
@@ -62,15 +79,36 @@ export default async function handler(
       path: `/crm/v3/objects/${GOLF_ROUND_OBJECT_TYPE}/batch/read`,
       body: {
         inputs: roundIds.map((id: string) => ({ id })),
-        properties: ['course', 'score', 'date'],
+        properties: [
+          `${APP_OBJECT_PREFIX}_course`,
+          `${APP_OBJECT_PREFIX}_score`,
+          `${APP_OBJECT_PREFIX}_date`,
+          `${APP_OBJECT_PREFIX}_holes`,
+          `${APP_OBJECT_PREFIX}_slope`,
+          `${APP_OBJECT_PREFIX}_course_rating`,
+        ],
       },
     });
 
+    if (!roundsResponse.ok) {
+      return await handleHubSpotError(
+        roundsResponse,
+        res,
+        'Batch read golf rounds'
+      );
+    }
+
     const roundsData = await roundsResponse.json();
+
+    // Strip the app prefix from properties for cleaner frontend consumption
+    const cleanedRounds = (roundsData.results || []).map((round: any) => ({
+      ...round,
+      properties: stripAppObjectPrefix(round.properties, APP_OBJECT_PREFIX),
+    }));
 
     return res.status(200).json({
       message: 'Golf rounds retrieved successfully',
-      golfRounds: roundsData.results || [],
+      golfRounds: cleanedRounds,
     });
   } catch (error) {
     console.error('Error fetching golf rounds:', error);
@@ -79,4 +117,3 @@ export default async function handler(
     });
   }
 }
-

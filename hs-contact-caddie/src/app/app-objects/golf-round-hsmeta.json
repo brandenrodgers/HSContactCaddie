@@ -38,6 +38,37 @@
         "name": "date",
         "label": "Date",
         "description": "The day the round was played"
+      },
+      {
+        "type": "enumeration",
+        "fieldType": "select",
+        "name": "holes",
+        "label": "Holes",
+        "description": "Number of holes played",
+        "options": [
+          {
+            "label": "9 Holes",
+            "value": "9"
+          },
+          {
+            "label": "18 Holes",
+            "value": "18"
+          }
+        ]
+      },
+      {
+        "type": "number",
+        "fieldType": "number",
+        "name": "slope",
+        "label": "Slope Rating",
+        "description": "The course slope rating (optional - default is 113)"
+      },
+      {
+        "type": "number",
+        "fieldType": "number",
+        "name": "course_rating",
+        "label": "Course Rating",
+        "description": "The course rating (optional - default is 72)"
       }
     ]
   }

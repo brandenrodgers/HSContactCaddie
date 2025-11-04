@@ -5,16 +5,13 @@
     "firstObjectType": "golf-round-app-object",
     "secondObjectType": "CONTACT",
     "firstToSecondBaseLimit": 1,
-    "secondToFirstBaseLimit": 1000,
     "labels": [
       {
         "name": "player",
         "firstObjectTypeLabel": "Round",
         "secondObjectTypeLabel": "Player",
-        "firstToSecondLabelLimit": 1,
-        "secondToFirstLabelLimit": 1000
+        "firstToSecondLabelLimit": 1
       }
     ]
   }
 }
-
