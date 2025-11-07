@@ -3,10 +3,12 @@ import {
   Accordion,
   Divider,
   EmptyState,
+  ErrorState,
   Flex,
   Heading,
   hubspot,
   LoadingSpinner,
+  StatusTag,
   Table,
   TableBody,
   TableCell,
@@ -21,15 +23,16 @@ import { fetchContactGolfRounds, createGolfRound } from "./api";
 import { GolfRound, GolfRoundProperties } from "./types";
 import { Handicap } from './Handicap';
 
-hubspot.extend(({ context, actions }: any) => (
-  <Extension context={context} sendAlert={actions.addAlert} />
+hubspot.extend(({ context }: any) => (
+  <Extension context={context} />
 ));
 
-const Extension = ({ context, sendAlert }: any) => {
+const Extension = ({ context }: any) => {
   const [golfRounds, setGolfRounds] = useState<GolfRound[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [createError, setCreateError] = useState<string | null>(null);
   const { properties, isLoading: isLoadingProperties } = useCrmProperties(['firstname']);
 
   const contactId = context.crm.objectId;
@@ -46,12 +49,6 @@ const Extension = ({ context, sendAlert }: any) => {
       setGolfRounds(rounds);
     } catch (err) {
       setError(err.message);
-      console.error("Error fetching golf rounds:", err);
-      sendAlert({
-        type: "danger",
-        title: "Error Loading Golf Rounds",
-        message: err.message,
-      });
     } finally {
       setLoading(false);
     }
@@ -59,25 +56,25 @@ const Extension = ({ context, sendAlert }: any) => {
 
   const handleCreateGolfRound = async (formData: GolfRoundProperties) => {
     try {
+      setCreateError(null);
       setIsSubmitting(true);
       await createGolfRound(portalId, contactId, formData);
-      sendAlert({
-        type: "success",
-        title: "Golf Round Recorded",
-        message: `Successfully recorded round at ${formData.course}`,
-      });
       await fetchGolfRounds();
     } catch (err) {
-      console.error("Error creating golf round:", err);
-      sendAlert({
-        type: "danger",
-        title: "Error Recording Golf Round",
-        message: err.message,
-      });
+      setCreateError(err.message);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const renderGolfRoundForm = () => {
+    return (
+      <Accordion title="Record a new golf round">
+        <GolfRoundForm onSubmit={handleCreateGolfRound} isSubmitting={isSubmitting} />
+        {createError && <StatusTag variant="danger">{createError}</StatusTag>}
+      </Accordion>
+    )
+  }
 
   if (loading || isLoadingProperties) {
     return (
@@ -90,11 +87,14 @@ const Extension = ({ context, sendAlert }: any) => {
   if (error && golfRounds.length === 0) {
     return (
       <Flex direction="column" gap="medium">
-        <Text>Error loading golf rounds. Please try again.</Text>
+        <ErrorState
+          title="Trouble fetching golf rounds"
+          type="error"
+        >
+          <Text>Try loading the rounds again.</Text>
+        </ErrorState>
         <Divider />
-        <Accordion title="Record a New Round">
-          <GolfRoundForm onSubmit={handleCreateGolfRound} isSubmitting={isSubmitting} />
-        </Accordion>
+        {renderGolfRoundForm()}
       </Flex>
     );
   }
@@ -103,14 +103,13 @@ const Extension = ({ context, sendAlert }: any) => {
     return (
       <Flex direction="column" gap="medium">
         <EmptyState
-          title="No Golf Rounds Yet"
+          title="No golf rounds yet"
           layout="vertical"
         >
           <Text>This contact hasn't recorded any golf rounds yet.</Text>
         </EmptyState>
         <Divider />
-        <Heading>Record Your First Round</Heading>
-        <GolfRoundForm onSubmit={handleCreateGolfRound} isSubmitting={isSubmitting} />
+        {renderGolfRoundForm()}
       </Flex>
     );
   }
@@ -121,7 +120,7 @@ const Extension = ({ context, sendAlert }: any) => {
       <Divider />
       <Flex direction="row" gap="extra-small" justify="between" align="baseline">
         <Heading>Golf Rounds</Heading>
-        <Text>Showing the last 20 rounds played</Text>
+        <Text>Showing the last {golfRounds.length > 20 ? 20 : golfRounds.length} rounds played</Text>
       </Flex>
       <Table bordered={true}>
         <TableHead>
@@ -151,9 +150,7 @@ const Extension = ({ context, sendAlert }: any) => {
           ))}
         </TableBody>
       </Table>
-      <Accordion title="Record a New Round">
-        <GolfRoundForm onSubmit={handleCreateGolfRound} isSubmitting={isSubmitting} />
-      </Accordion>
+      {renderGolfRoundForm()}
     </Flex>
   );
 };
