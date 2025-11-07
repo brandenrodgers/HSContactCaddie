@@ -27,8 +27,7 @@ const Home: NextPage = () => {
 
   const handleConnectWithHubSpot = () => {
     // TODO this is not efficient, I should use the getAuthorizationUrl function
-    window.location.href =
-      'https://app.hubspot.com/oauth/authorize?client_id=e0a8f88a-96e8-4b66-8d14-5860436f9d9c&redirect_uri=https%3A%2F%2Fhs-contact-caddie.vercel.app%2Fapi%2Foauth-callback&scope=crm.objects.contacts.write%20crm.objects.custom.read%20crm.objects.custom.write%20oauth%20crm.objects.contacts.read%20crm.app.schemas.a23032901_golf_round.properties.write%20crm.app.schemas.a23032901_golf_round.read%20crm.app.objects.a23032901_golf_round.merge%20crm.app.objects.a23032901_golf_round.delete%20crm.app.objects.a23032901_golf_round.view%20crm.app.objects.a23032901_golf_round.edit%20crm.app.objects.a23032901_golf_round.create';
+    window.location.href = `https://app.hubspot.com/oauth/authorize?client_id=${process.env.HUBSPOT_CLIENT_ID}&redirect_uri=https%3A%2F%2Fhs-contact-caddie.vercel.app%2Fapi%2Foauth-callback&scope=crm.objects.contacts.write%20crm.objects.custom.read%20crm.objects.custom.write%20oauth%20crm.objects.contacts.read%20crm.app.schemas.a23032901_golf_round.properties.write%20crm.app.schemas.a23032901_golf_round.read%20crm.app.objects.a23032901_golf_round.merge%20crm.app.objects.a23032901_golf_round.delete%20crm.app.objects.a23032901_golf_round.view%20crm.app.objects.a23032901_golf_round.edit%20crm.app.objects.a23032901_golf_round.create`;
   };
 
   return (
