@@ -43,12 +43,29 @@ export const validateRequestSignature = (req: NextApiRequest): boolean => {
     const host = req.headers.host;
     const urlPath = req.url || '';
 
+    // Extract hostname (without port) to match Express behavior in the docs example
+    // In Express, req.hostname doesn't include the port, but req.headers.host does
+    const hostname = host?.split(':')[0] || host;
+
     // Decode URL-encoded characters as required by HubSpot v3 signature validation
     const decodedUrl = decodeHubSpotUri(urlPath);
-    const fullUrl = `${protocol}://${host}${decodedUrl}`;
+    const fullUrl = `${protocol}://${hostname}${decodedUrl}`;
 
     // Get request body - use empty string if body is undefined or null
     const requestBody = req.body === undefined || req.body === null ? '' : JSON.stringify(req.body);
+
+    // Debug logging to help diagnose issues
+    console.log('[Signature Validation Debug]');
+    console.log('  Method:', req.method);
+    console.log('  Protocol:', protocol);
+    console.log('  Host (with port):', host);
+    console.log('  Hostname (no port):', hostname);
+    console.log('  URL Path (raw):', urlPath);
+    console.log('  URL Path (decoded):', decodedUrl);
+    console.log('  Full URL:', fullUrl);
+    console.log('  Request Body:', requestBody);
+    console.log('  Timestamp:', timestampHeader);
+    console.log('  Signature (first 20 chars):', (signatureHeader as string).substring(0, 20) + '...');
 
     const isValid = Signature.isValid({
       signatureVersion: 'v3',
@@ -62,9 +79,12 @@ export const validateRequestSignature = (req: NextApiRequest): boolean => {
 
     if (!isValid) {
       console.error('Signature validation failed: signature does not match');
+      console.error('  Attempted URL:', fullUrl);
+      console.error('  Attempted body:', requestBody);
       return false;
     }
 
+    console.log('✅ Signature validation passed');
     return true;
   } catch (error) {
     console.error('Signature validation failed:', error);
