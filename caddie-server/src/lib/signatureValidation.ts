@@ -58,19 +58,6 @@ export const validateRequestSignature = (req: NextApiRequest): boolean => {
       requestBody = req.body === undefined || req.body === null ? '' : JSON.stringify(req.body);
     }
 
-    // Debug logging to help diagnose issues
-    console.log('[Signature Validation Debug]');
-    console.log('  Method:', req.method);
-    console.log('  Protocol:', protocol);
-    console.log('  Host (with port):', host);
-    console.log('  Hostname (no port):', hostname);
-    console.log('  URL Path (raw):', urlPath);
-    console.log('  URL Path (decoded):', decodedUrl);
-    console.log('  Full URL:', fullUrl);
-    console.log('  Request Body:', requestBody);
-    console.log('  Timestamp:', timestampHeader);
-    console.log('  Signature (first 20 chars):', (signatureHeader as string).substring(0, 20) + '...');
-
     const isValid = Signature.isValid({
       signatureVersion: 'v3',
       signature: signatureHeader as string,
