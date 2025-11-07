@@ -27,10 +27,7 @@ function getTokenKey(portalId: string): string {
   return `hubspot:tokens:${env}:${portalId}`;
 }
 
-export async function storeTokens(
-  portalId: string,
-  tokenResponse: OAuthTokenResponse
-): Promise<void> {
+export async function storeTokens(portalId: string, tokenResponse: OAuthTokenResponse): Promise<void> {
   const tokenData: TokenData = {
     accessToken: tokenResponse.accessToken,
     refreshToken: tokenResponse.refreshToken,
@@ -57,9 +54,7 @@ export async function deleteTokens(portalId: string): Promise<void> {
   console.log(`Deleted tokens for portal ${portalId} (${env} environment)`);
 }
 
-async function refreshAccessToken(
-  refreshToken: string
-): Promise<OAuthTokenResponse> {
+async function refreshAccessToken(refreshToken: string): Promise<OAuthTokenResponse> {
   console.log('Refreshing access token');
 
   const response = await hubspotClient.oauth.tokensApi.create(
@@ -82,9 +77,7 @@ function isTokenExpired(expiresAt: number): boolean {
   return Date.now() >= expiresAt - TOKEN_REFRESH_BUFFER_MS;
 }
 
-export async function getValidAccessToken(
-  portalId: string
-): Promise<string | null> {
+export async function getValidAccessToken(portalId: string): Promise<string | null> {
   const tokens = await getTokens(portalId);
 
   if (!tokens) {
@@ -108,9 +101,7 @@ export async function getValidAccessToken(
   return tokens.accessToken;
 }
 
-export async function getAuthorizedHubSpotClient(
-  portalId: string
-): Promise<Client | null> {
+export async function getAuthorizedHubSpotClient(portalId: string): Promise<Client | null> {
   const accessToken = await getValidAccessToken(portalId);
 
   if (!accessToken) {
