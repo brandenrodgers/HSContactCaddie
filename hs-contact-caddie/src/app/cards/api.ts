@@ -30,7 +30,7 @@ export const fetchContactGolfRounds = async (
   contactId: number
 ): Promise<GolfRound[]> => {
   const response = await hubspot.fetch(
-    `https://api.hubapi.com/api/fetch-golf-rounds?portalId=${portalId}&contactId=${contactId}`,
+    `https://hs-contact-caddie.vercel.app/api/fetch-golf-rounds?portalId=${portalId}&contactId=${contactId}`,
     {
       method: "GET",
     }
@@ -51,7 +51,7 @@ export const createGolfRound = async (
   formData: GolfRoundProperties
 ): Promise<void> => {
   const response = await hubspot.fetch(
-    `https://api.hubapi.com/api/create-golf-round?portalId=${portalId}&contactId=${contactId}`,
+    `https://hs-contact-caddie.vercel.app/api/create-golf-round?portalId=${portalId}&contactId=${contactId}`,
     {
       method: "POST",
       body: {
