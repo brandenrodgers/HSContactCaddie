@@ -51,8 +51,12 @@ export const validateRequestSignature = (req: NextApiRequest): boolean => {
     const decodedUrl = decodeHubSpotUri(urlPath);
     const fullUrl = `${protocol}://${hostname}${decodedUrl}`;
 
-    // Get request body - use empty string if body is undefined or null
-    const requestBody = req.body === undefined || req.body === null ? '' : JSON.stringify(req.body);
+    // Get request body - for GET requests, always use empty string
+    // For other methods, use JSON.stringify if body exists, otherwise empty string
+    let requestBody = '';
+    if (req.method && req.method.toUpperCase() !== 'GET') {
+      requestBody = req.body === undefined || req.body === null ? '' : JSON.stringify(req.body);
+    }
 
     // Debug logging to help diagnose issues
     console.log('[Signature Validation Debug]');
