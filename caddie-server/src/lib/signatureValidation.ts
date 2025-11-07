@@ -11,11 +11,15 @@ export const validateRequestSignature = (req: NextApiRequest): boolean => {
   }
 
   try {
+    // Construct the full URL, handling proxies (like Vercel) and local development
+    const protocol = req.headers['x-forwarded-proto'] || (req.headers.host?.includes('localhost') ? 'http' : 'https');
+
     const isValid = Signature.isValid({
       signatureVersion: 'v3',
       signature: signatureHeader as string,
       timestamp: Number(timestampHeader),
       method: req.method,
+      url: `${protocol}://${req.headers.host}${req.url}`,
       requestBody: JSON.stringify(req.body),
       clientSecret: process.env.HUBSPOT_CLIENT_SECRET as string,
     });
