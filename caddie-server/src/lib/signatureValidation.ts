@@ -2,7 +2,6 @@ import type { NextApiRequest } from 'next';
 import { Signature } from '@hubspot/api-client';
 
 export const validateRequestSignature = (req: NextApiRequest): boolean => {
-  // Parse headers needed to validate signature
   const signatureHeader = req.headers['x-hubspot-signature-v3'];
   const timestampHeader = req.headers['x-hubspot-request-timestamp'];
 
