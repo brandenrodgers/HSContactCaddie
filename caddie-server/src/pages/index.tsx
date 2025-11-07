@@ -6,7 +6,10 @@ const Home: NextPage = () => {
     <>
       <Head>
         <title>HubSpot Contact Caddie</title>
-        <meta name="description" content="Track golf stats for your HubSpot contacts" />
+        <meta
+          name="description"
+          content="Track golf stats for your HubSpot contacts"
+        />
       </Head>
 
       <div style={styles.container}>
@@ -15,9 +18,7 @@ const Home: NextPage = () => {
           <p style={styles.description}>
             Track golf stats for your HubSpot contacts
           </p>
-          <button style={styles.button}>
-            Get Started
-          </button>
+          <button style={styles.button}>Get Started</button>
         </main>
       </div>
     </>
@@ -31,7 +32,8 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f7fafc',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
   },
   main: {
     textAlign: 'center' as const,
@@ -62,4 +64,3 @@ const styles = {
 };
 
 export default Home;
-

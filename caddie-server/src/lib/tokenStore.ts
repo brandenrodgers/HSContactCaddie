@@ -64,10 +64,11 @@ async function refreshAccessToken(
 
   const response = await hubspotClient.oauth.tokensApi.create(
     GRANT_TYPES.REFRESH_TOKEN,
-    refreshToken,
+    undefined,
     undefined,
     CLIENT_ID,
-    CLIENT_SECRET
+    CLIENT_SECRET,
+    refreshToken
   );
 
   return {
@@ -120,4 +121,3 @@ export async function getAuthorizedHubSpotClient(
   client.setAccessToken(accessToken);
   return client;
 }
-
