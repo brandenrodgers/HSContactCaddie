@@ -3,7 +3,7 @@ import { getAuthorizedHubSpotClient } from '@/lib/tokenStore';
 import {
   GOLF_ROUND_OBJECT_TYPE,
   GOLF_ROUND_OBJECT_TYPE_ID,
-  APP_OBJECT_PREFIX,
+  GOLF_ROUND_OBJECT_PREFIX,
 } from '@/lib/constants';
 import {
   handleHubSpotError,
@@ -80,12 +80,12 @@ export default async function handler(
       body: {
         inputs: roundIds.map((id: string) => ({ id })),
         properties: [
-          `${APP_OBJECT_PREFIX}_course`,
-          `${APP_OBJECT_PREFIX}_score`,
-          `${APP_OBJECT_PREFIX}_date`,
-          `${APP_OBJECT_PREFIX}_holes`,
-          `${APP_OBJECT_PREFIX}_slope`,
-          `${APP_OBJECT_PREFIX}_course_rating`,
+          `${GOLF_ROUND_OBJECT_PREFIX}_course`,
+          `${GOLF_ROUND_OBJECT_PREFIX}_score`,
+          `${GOLF_ROUND_OBJECT_PREFIX}_date`,
+          `${GOLF_ROUND_OBJECT_PREFIX}_holes`,
+          `${GOLF_ROUND_OBJECT_PREFIX}_slope`,
+          `${GOLF_ROUND_OBJECT_PREFIX}_course_rating`,
         ],
       },
     });
@@ -103,7 +103,10 @@ export default async function handler(
     // Strip the app prefix from properties for cleaner frontend consumption
     const cleanedRounds = (roundsData.results || []).map((round: any) => ({
       ...round,
-      properties: stripAppObjectPrefix(round.properties, APP_OBJECT_PREFIX),
+      properties: stripAppObjectPrefix(
+        round.properties,
+        GOLF_ROUND_OBJECT_PREFIX || ''
+      ),
     }));
 
     return res.status(200).json({

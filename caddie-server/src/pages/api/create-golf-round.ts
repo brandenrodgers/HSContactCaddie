@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getAuthorizedHubSpotClient } from '@/lib/tokenStore';
 import {
   GOLF_ROUND_OBJECT_TYPE_ID,
-  APP_OBJECT_PREFIX,
+  GOLF_ROUND_OBJECT_PREFIX,
   GOLF_ROUND_TO_CONTACT_ASSOCIATION_ID,
 } from '@/lib/constants';
 import {
@@ -98,7 +98,7 @@ export default async function handler(
 
     const properties = formatAppObjectProperties(
       propertiesData,
-      APP_OBJECT_PREFIX
+      GOLF_ROUND_OBJECT_PREFIX || ''
     );
 
     console.log(

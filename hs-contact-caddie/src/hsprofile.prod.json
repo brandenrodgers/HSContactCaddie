@@ -3,7 +3,6 @@
   "variables": {
     "ENV": "production",
     "DOMAIN": "https://hs-contact-caddie.vercel.app",
-    "GOLF_ROUND_OBJECT_PREFIX": "a23034755",
-    "GOLF_ROUND_OBJECT_TYPE_ID": "1-7893385"
+    "GOLF_ROUND_OBJECT_PREFIX": "a23034755"
   }
 }
