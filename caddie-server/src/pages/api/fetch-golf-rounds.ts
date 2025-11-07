@@ -1,14 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getAuthorizedHubSpotClient } from '@/lib/tokenStore';
-import {
-  GOLF_ROUND_OBJECT_TYPE,
-  GOLF_ROUND_OBJECT_TYPE_ID,
-  GOLF_ROUND_OBJECT_PREFIX,
-} from '@/lib/constants';
-import {
-  handleHubSpotError,
-  stripAppObjectPrefix,
-} from '@/lib/hubspotApiUtils';
+import { GOLF_ROUND_OBJECT_TYPE, GOLF_ROUND_OBJECT_TYPE_ID, GOLF_ROUND_OBJECT_PREFIX } from '@/lib/constants';
+import { handleHubSpotError, stripAppObjectPrefix } from '@/lib/hubspotApiUtils';
+import { validateRequestSignature } from '@/lib/signatureValidation';
 
 type ResponseData = {
   message?: string;
@@ -16,12 +10,13 @@ type ResponseData = {
   error?: string;
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseData>) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (!validateRequestSignature(req)) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const { portalId, contactId } = req.query;
@@ -43,8 +38,7 @@ export default async function handler(
 
     if (!hubspotClient) {
       return res.status(401).json({
-        error:
-          'No valid authorization found for this portal. Please re-authenticate.',
+        error: 'No valid authorization found for this portal. Please re-authenticate.',
       });
     }
 
@@ -55,11 +49,7 @@ export default async function handler(
     });
 
     if (!associationsResponse.ok) {
-      return await handleHubSpotError(
-        associationsResponse,
-        res,
-        'Fetch golf round associations'
-      );
+      return await handleHubSpotError(associationsResponse, res, 'Fetch golf round associations');
     }
 
     const associationsData = await associationsResponse.json();
@@ -91,11 +81,7 @@ export default async function handler(
     });
 
     if (!roundsResponse.ok) {
-      return await handleHubSpotError(
-        roundsResponse,
-        res,
-        'Batch read golf rounds'
-      );
+      return await handleHubSpotError(roundsResponse, res, 'Batch read golf rounds');
     }
 
     const roundsData = await roundsResponse.json();
@@ -103,10 +89,7 @@ export default async function handler(
     // Strip the app prefix from properties for cleaner frontend consumption
     const cleanedRounds = (roundsData.results || []).map((round: any) => ({
       ...round,
-      properties: stripAppObjectPrefix(
-        round.properties,
-        GOLF_ROUND_OBJECT_PREFIX || ''
-      ),
+      properties: stripAppObjectPrefix(round.properties, GOLF_ROUND_OBJECT_PREFIX || ''),
     }));
 
     return res.status(200).json({

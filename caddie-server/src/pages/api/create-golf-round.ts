@@ -5,10 +5,8 @@ import {
   GOLF_ROUND_OBJECT_PREFIX,
   GOLF_ROUND_TO_CONTACT_ASSOCIATION_ID,
 } from '@/lib/constants';
-import {
-  handleHubSpotError,
-  formatAppObjectProperties,
-} from '@/lib/hubspotApiUtils';
+import { handleHubSpotError, formatAppObjectProperties } from '@/lib/hubspotApiUtils';
+import { validateRequestSignature } from '@/lib/signatureValidation';
 
 type ResponseData = {
   message?: string;
@@ -16,10 +14,7 @@ type ResponseData = {
   error?: string;
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseData>) {
   console.log('=== CREATE GOLF ROUND HANDLER CALLED ===');
   console.log('Method:', req.method);
   console.log('Query params:', req.query);
@@ -28,6 +23,10 @@ export default async function handler(
   if (req.method !== 'POST') {
     console.log('❌ Invalid method, rejecting request');
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (!validateRequestSignature(req)) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const { portalId, contactId } = req.query;
@@ -50,16 +49,7 @@ export default async function handler(
   const { course, score, date, holes, slope, course_rating } = req.body;
 
   if (!course || !score || !date || !holes) {
-    console.log(
-      '❌ Missing required fields. Course:',
-      !!course,
-      'Score:',
-      !!score,
-      'Date:',
-      !!date,
-      'Holes:',
-      !!holes
-    );
+    console.log('❌ Missing required fields. Course:', !!course, 'Score:', !!score, 'Date:', !!date, 'Holes:', !!holes);
     return res.status(400).json({
       error: `Missing required field(s): ${!course ? 'course' : ''}, ${!score ? 'score' : ''}, ${!date ? 'date' : ''}, ${!holes ? 'holes' : ''}`,
     });
@@ -72,8 +62,7 @@ export default async function handler(
     if (!hubspotClient) {
       console.log('❌ No valid authorization found for portal:', portalId);
       return res.status(401).json({
-        error:
-          'No valid authorization found for this portal. Please re-authenticate.',
+        error: 'No valid authorization found for this portal. Please re-authenticate.',
       });
     }
     console.log('✅ HubSpot client authenticated successfully');
@@ -96,15 +85,9 @@ export default async function handler(
       propertiesData.course_rating = course_rating.toString();
     }
 
-    const properties = formatAppObjectProperties(
-      propertiesData,
-      GOLF_ROUND_OBJECT_PREFIX || ''
-    );
+    const properties = formatAppObjectProperties(propertiesData, GOLF_ROUND_OBJECT_PREFIX || '');
 
-    console.log(
-      '🏌️ Creating golf round with properties:',
-      JSON.stringify(properties, null, 2)
-    );
+    console.log('🏌️ Creating golf round with properties:', JSON.stringify(properties, null, 2));
 
     const createResponse = await hubspotClient.apiRequest({
       method: 'POST',
@@ -128,19 +111,11 @@ export default async function handler(
     });
     if (labelsResponse.ok) {
       const labelsData = await labelsResponse.json();
-      console.log(
-        '📋 Association labels:',
-        JSON.stringify(labelsData, null, 2)
-      );
+      console.log('📋 Association labels:', JSON.stringify(labelsData, null, 2));
     }
 
     // Associate the new golf round with contact
-    console.log(
-      '🔗 Associating golf round',
-      createdRound.id,
-      'with contact',
-      contactId
-    );
+    console.log('🔗 Associating golf round', createdRound.id, 'with contact', contactId);
 
     const associationResponse = await hubspotClient.apiRequest({
       method: 'PUT',
@@ -155,11 +130,7 @@ export default async function handler(
 
     // Handle association response
     if (!associationResponse.ok) {
-      return await handleHubSpotError(
-        associationResponse,
-        res,
-        'Associate golf round with contact'
-      );
+      return await handleHubSpotError(associationResponse, res, 'Associate golf round with contact');
     }
 
     console.log('✅ Golf round created and associated successfully!');

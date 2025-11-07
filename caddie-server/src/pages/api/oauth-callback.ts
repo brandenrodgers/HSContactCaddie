@@ -14,10 +14,7 @@ type ResponseData = {
 
 const hubspotClient = new Client();
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseData>) {
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
@@ -52,9 +49,7 @@ export default async function handler(
 
     // Get the access token info to retrieve the portal ID
     hubspotClient.setAccessToken(getTokensResponse.accessToken);
-    const tokenInfo = await hubspotClient.oauth.accessTokensApi.get(
-      getTokensResponse.accessToken
-    );
+    const tokenInfo = await hubspotClient.oauth.accessTokensApi.get(getTokensResponse.accessToken);
 
     const portalId = tokenInfo.hubId.toString();
     console.log(`Storing tokens for portal ${portalId}`);

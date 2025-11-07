@@ -35,11 +35,7 @@ export async function handleHubSpotError(
   }
 
   // Extract useful error information
-  const errorMessage =
-    errorData?.message ||
-    errorData?.error ||
-    response.statusText ||
-    'Unknown error';
+  const errorMessage = errorData?.message || errorData?.error || response.statusText || 'Unknown error';
 
   const errorResponse: HubSpotErrorResponse = {
     error: errorMessage,
@@ -48,10 +44,7 @@ export async function handleHubSpotError(
     correlationId: errorData?.correlationId,
   };
 
-  console.error(
-    'Sending error response:',
-    JSON.stringify(errorResponse, null, 2)
-  );
+  console.error('Sending error response:', JSON.stringify(errorResponse, null, 2));
 
   res.status(response.status || 500).json(errorResponse);
 }
@@ -99,10 +92,7 @@ export async function parseHubSpotResponse<T = any>(
 /**
  * Formats property names with the app prefix for HubSpot custom objects
  */
-export function formatAppObjectProperties(
-  properties: Record<string, any>,
-  appPrefix: string
-): Record<string, any> {
+export function formatAppObjectProperties(properties: Record<string, any>, appPrefix: string): Record<string, any> {
   const formatted: Record<string, any> = {};
 
   for (const [key, value] of Object.entries(properties)) {
@@ -120,10 +110,7 @@ export function formatAppObjectProperties(
 /**
  * Strips the app prefix from property names for easier frontend consumption
  */
-export function stripAppObjectPrefix(
-  properties: Record<string, any>,
-  appPrefix: string
-): Record<string, any> {
+export function stripAppObjectPrefix(properties: Record<string, any>, appPrefix: string): Record<string, any> {
   const stripped: Record<string, any> = {};
 
   for (const [key, value] of Object.entries(properties)) {
