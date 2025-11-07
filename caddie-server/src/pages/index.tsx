@@ -1,7 +1,6 @@
 import type { NextPage } from 'next';
-import Head from 'next/head';
 import { useState } from 'react';
-import { commonStyles, globalAnimations } from '../lib/styles';
+import { commonStyles } from '../lib/styles';
 
 const Home: NextPage = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -31,59 +30,51 @@ const Home: NextPage = () => {
   };
 
   return (
-    <>
-      <Head>
-        <title>HubSpot Contact Caddie</title>
-        <meta name="description" content="Track golf stats for your HubSpot contacts" />
-        <style>{globalAnimations}</style>
-      </Head>
+    <div style={commonStyles.container}>
+      <div style={commonStyles.backgroundGradient} />
+      <main style={commonStyles.main}>
+        <div style={styles.hero}>
+          <div style={commonStyles.emojiContainer}>
+            <span style={commonStyles.emoji}>⛳️</span>
+          </div>
+          <h1 style={commonStyles.title}>HubSpot Contact Caddie</h1>
+          <p style={commonStyles.tagline}>The perfect way to track golf stats for your contacts</p>
+          <p style={commonStyles.description}>
+            Connect with your clients on the course. Track rounds, calculate handicaps, and build stronger
+            relationships—all within HubSpot.
+          </p>
+          <button
+            style={{
+              ...commonStyles.button,
+              ...(isHovered ? commonStyles.buttonHover : {}),
+            }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onClick={handleConnectWithHubSpot}
+          >
+            Connect with HubSpot
+          </button>
+        </div>
 
-      <div style={commonStyles.container}>
-        <div style={commonStyles.backgroundGradient} />
-        <main style={commonStyles.main}>
-          <div style={styles.hero}>
-            <div style={commonStyles.emojiContainer}>
-              <span style={commonStyles.emoji}>⛳️</span>
-            </div>
-            <h1 style={commonStyles.title}>HubSpot Contact Caddie</h1>
-            <p style={commonStyles.tagline}>The perfect way to track golf stats for your contacts</p>
-            <p style={commonStyles.description}>
-              Connect with your clients on the course. Track rounds, calculate handicaps, and build stronger
-              relationships—all within HubSpot.
-            </p>
-            <button
+        <div style={styles.features}>
+          {features.map((feature, index) => (
+            <div
+              key={index}
               style={{
-                ...commonStyles.button,
-                ...(isHovered ? commonStyles.buttonHover : {}),
+                ...commonStyles.card,
+                ...(hoveredCard === index ? styles.featureCardHover : {}),
               }}
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-              onClick={handleConnectWithHubSpot}
+              onMouseEnter={() => setHoveredCard(index)}
+              onMouseLeave={() => setHoveredCard(null)}
             >
-              Connect with HubSpot
-            </button>
-          </div>
-
-          <div style={styles.features}>
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                style={{
-                  ...commonStyles.card,
-                  ...(hoveredCard === index ? styles.featureCardHover : {}),
-                }}
-                onMouseEnter={() => setHoveredCard(index)}
-                onMouseLeave={() => setHoveredCard(null)}
-              >
-                <div style={styles.featureEmoji}>{feature.emoji}</div>
-                <h3 style={styles.featureTitle}>{feature.title}</h3>
-                <p style={styles.featureDescription}>{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </main>
-      </div>
-    </>
+              <div style={styles.featureEmoji}>{feature.emoji}</div>
+              <h3 style={styles.featureTitle}>{feature.title}</h3>
+              <p style={styles.featureDescription}>{feature.description}</p>
+            </div>
+          ))}
+        </div>
+      </main>
+    </div>
   );
 };
 

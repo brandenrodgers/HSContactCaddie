@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
   Accordion,
+  Button,
   Divider,
-  EmptyState,
   ErrorState,
   Flex,
   Heading,
@@ -69,10 +69,12 @@ const Extension = ({ context }: any) => {
 
   const renderGolfRoundForm = () => {
     return (
-      <Accordion title="Record a new golf round">
-        <GolfRoundForm onSubmit={handleCreateGolfRound} isSubmitting={isSubmitting} />
-        {createError && <StatusTag variant="danger">{createError}</StatusTag>}
-      </Accordion>
+      <Flex direction="column" align="start" gap="medium">
+        <Accordion title={`Record a new golf round for ${properties.firstname}`}>
+          <GolfRoundForm onSubmit={handleCreateGolfRound} isSubmitting={isSubmitting} />
+          {createError && <StatusTag variant="danger">{createError}</StatusTag>}
+        </Accordion>
+      </Flex>
     )
   }
 
@@ -84,30 +86,21 @@ const Extension = ({ context }: any) => {
     );
   }
 
-  if (error && golfRounds.length === 0) {
-    return (
-      <Flex direction="column" gap="medium">
-        <ErrorState
-          title="Trouble fetching golf rounds"
-          type="error"
-        >
-          <Text>Try loading the rounds again.</Text>
-        </ErrorState>
-        <Divider />
-        {renderGolfRoundForm()}
-      </Flex>
-    );
-  }
-
   if (golfRounds.length === 0) {
     return (
-      <Flex direction="column" gap="medium">
-        <EmptyState
-          title="No golf rounds yet"
-          layout="vertical"
-        >
-          <Text>This contact hasn't recorded any golf rounds yet.</Text>
-        </EmptyState>
+      <Flex direction="column" align="center" gap="medium">
+        {error ? (
+          <ErrorState title="Trouble fetching golf rounds" type="error">
+            <Button onClick={() => {
+              setLoading(true);
+              fetchGolfRounds()
+            }}>
+              Try reloading rounds
+            </Button>
+          </ErrorState>
+        ) : (
+          <StatusTag variant="warning">No rounds recorded for {properties.firstname}. Record the first round to get started!</StatusTag>
+        )}
         <Divider />
         {renderGolfRoundForm()}
       </Flex>
