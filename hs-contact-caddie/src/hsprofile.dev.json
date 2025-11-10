@@ -4,6 +4,7 @@
     "ENV": "development",
     "REDIRECT_DOMAIN": "http://localhost:3000",
     "FETCH_DOMAIN": "https://hs-contact-caddie-git-staging-contact-caddies.vercel.app",
-    "GOLF_ROUND_OBJECT_PREFIX": "a23328082"
+    "GOLF_ROUND_OBJECT_PREFIX": "a23328082",
+    "GOLF_ROUND_OBJECT_TYPE_ID": "1-7966425"
   }
 }

@@ -12,10 +12,11 @@ import {
   LineChart,
   Flex,
 } from "@hubspot/ui-extensions";
+import { CrmActionButton } from '@hubspot/ui-extensions/crm';
 import { GolfRound } from "./types";
 
 
-export const GolfRounds = ({ golfRounds, showGolfRounds }: { golfRounds: GolfRound[], showGolfRounds: boolean }) => {
+export const GolfRounds = ({ golfRounds, showGolfRounds, golfRoundObjectTypeId }: { golfRounds: GolfRound[], showGolfRounds: boolean, golfRoundObjectTypeId: string }) => {
 
   const getScoreTrends = () => {
     return golfRounds.slice(0, 20).map(({ properties }) => {
@@ -27,8 +28,10 @@ export const GolfRounds = ({ golfRounds, showGolfRounds }: { golfRounds: GolfRou
     });
   }
 
-  if (!showGolfRounds) {
-    return null;
+  const renderGolfRoundsCountLabel = () => {
+    return (
+      <Text>Showing the last {golfRounds.length > 20 ? 20 : golfRounds.length} round{golfRounds.length > 1 ? 's' : ''} played</Text>
+    )
   }
 
   const renderGolfRoundsTable = () => {
@@ -43,6 +46,7 @@ export const GolfRounds = ({ golfRounds, showGolfRounds }: { golfRounds: GolfRou
               <TableHeader>Date</TableHeader>
               <TableHeader>Rating</TableHeader>
               <TableHeader>Slope</TableHeader>
+              <TableHeader>Record link</TableHeader>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -58,11 +62,25 @@ export const GolfRounds = ({ golfRounds, showGolfRounds }: { golfRounds: GolfRou
                 </TableCell>
                 <TableCell>{round.properties.course_rating || "-"}</TableCell>
                 <TableCell>{round.properties.slope || "-"}</TableCell>
+                <TableCell>
+                <CrmActionButton
+                  actionType="RECORD_APP_LINK"
+                  actionContext={{
+                    objectTypeId: golfRoundObjectTypeId,
+                    objectId: round.id,
+                    includeEschref: true,
+                  }}
+                  size="extra-small"
+                  variant="secondary"
+                >
+                  View round
+                </CrmActionButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
-        <Text>Showing the last {golfRounds.length > 20 ? 20 : golfRounds.length} rounds played</Text>
+        {renderGolfRoundsCountLabel()}
       </>
     )
   }
@@ -85,15 +103,19 @@ export const GolfRounds = ({ golfRounds, showGolfRounds }: { golfRounds: GolfRou
             showTooltips: true,
           }}
         />
-        <Text>Showing the last {golfRounds.length > 20 ? 20 : golfRounds.length} rounds played</Text>
+        {renderGolfRoundsCountLabel()}
       </>
     )
+  }
+
+  if (!showGolfRounds) {
+    return null;
   }
 
   return (
     <Flex align="stretch" direction="column" gap="small">
       <Tabs defaultSelected="golf-rounds-table">
-        <Tab tabId="golf-rounds-table" title="Golf rounds">
+        <Tab tabId="golf-rounds-table" title="Rounds played">
           {renderGolfRoundsTable()}
         </Tab>
         <Tab tabId="golf-rounds-chart" title="Score trends">

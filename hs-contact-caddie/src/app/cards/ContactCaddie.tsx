@@ -36,6 +36,7 @@ const Extension = ({ actions, context }: any) => {
   const contactId = context.crm.objectId;
   const portalId = context.portal.id;
   const fetchDomain = context.variables.FETCH_DOMAIN;
+  const golfRoundObjectTypeId = context.variables.GOLF_ROUND_OBJECT_TYPE_ID;
 
   useEffect(() => {
     fetchGolfRounds();
@@ -76,7 +77,7 @@ const Extension = ({ actions, context }: any) => {
           <Modal id={CREATE_GOLF_ROUND_MODAL_ID} title={`New golf round for ${properties.firstname}`} width="md">
             <ModalBody>
               <Flex direction="column" align="start" gap="medium">
-                <GolfRoundForm onSubmit={handleCreateGolfRound} isSubmitting={isSubmitting} />
+                <GolfRoundForm onSubmit={handleCreateGolfRound} isSubmitting={isSubmitting} firstname={properties.firstname} />
                 {createError && <StatusTag variant="danger">{createError}</StatusTag>}
               </Flex>
             </ModalBody>
@@ -122,7 +123,7 @@ const Extension = ({ actions, context }: any) => {
         <Button size="extra-small" onClick={() => setShowGolfRounds(false)} variant="secondary">
           <Icon name="left" /> Back to handicap
         </Button>
-        <GolfRounds golfRounds={golfRounds} showGolfRounds={showGolfRounds} />
+        <GolfRounds golfRounds={golfRounds} showGolfRounds={showGolfRounds} golfRoundObjectTypeId={golfRoundObjectTypeId} />
       </Flex>
     )
   }
