@@ -1,38 +1,36 @@
 import React, { useState, useEffect } from "react";
 import {
-  Accordion,
   Button,
   Divider,
   ErrorState,
   Flex,
-  Heading,
   hubspot,
   LoadingSpinner,
+  Modal,
+  ModalBody,
+  Icon,
   StatusTag,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  Text,
 } from "@hubspot/ui-extensions";
 import { useCrmProperties } from "@hubspot/ui-extensions/crm";
 import { GolfRoundForm } from "./GolfRoundForm";
 import { fetchContactGolfRounds, createGolfRound } from "./api";
 import { GolfRound, GolfRoundProperties } from "./types";
 import { Handicap } from './Handicap';
+import { GolfRounds } from './GolfRounds';
 
-hubspot.extend(({ context }: any) => (
-  <Extension context={context} />
+const CREATE_GOLF_ROUND_MODAL_ID = 'create-golf-round-modal';
+
+hubspot.extend(({ actions, context }: any) => (
+  <Extension actions={actions} context={context} />
 ));
 
-const Extension = ({ context }: any) => {
+const Extension = ({ actions, context }: any) => {
   const [golfRounds, setGolfRounds] = useState<GolfRound[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [createError, setCreateError] = useState<string | null>(null);
+  const [showGolfRounds, setShowGolfRounds] = useState(false);
   const { properties, isLoading: isLoadingProperties } = useCrmProperties(['firstname']);
 
   const contactId = context.crm.objectId;
@@ -64,19 +62,30 @@ const Extension = ({ context }: any) => {
       setCreateError(err.message);
     } finally {
       setIsSubmitting(false);
+      actions.closeOverlay(CREATE_GOLF_ROUND_MODAL_ID)
     }
   };
 
   const renderGolfRoundForm = () => {
     return (
-      <Flex direction="column" align="start" gap="medium">
-        <Accordion title={`Record a new golf round for ${properties.firstname}`}>
-          <GolfRoundForm onSubmit={handleCreateGolfRound} isSubmitting={isSubmitting} />
-          {createError && <StatusTag variant="danger">{createError}</StatusTag>}
-        </Accordion>
-      </Flex>
-    )
-  }
+      <Button
+        size="small"
+        variant="primary"
+        overlay={
+          <Modal id={CREATE_GOLF_ROUND_MODAL_ID} title={`New golf round for ${properties.firstname}`} width="md">
+            <ModalBody>
+              <Flex direction="column" align="start" gap="medium">
+                <GolfRoundForm onSubmit={handleCreateGolfRound} isSubmitting={isSubmitting} />
+                {createError && <StatusTag variant="danger">{createError}</StatusTag>}
+              </Flex>
+            </ModalBody>
+          </Modal>
+        }
+      >
+        <Icon name="edit" /> Record a new round
+      </Button>
+    );
+  };
 
   if (loading || isLoadingProperties) {
     return (
@@ -91,7 +100,7 @@ const Extension = ({ context }: any) => {
       <Flex direction="column" align="center" gap="medium">
         {error ? (
           <ErrorState title="Trouble fetching golf rounds" type="error">
-            <Button onClick={() => {
+            <Button size="small" onClick={() => {
               setLoading(true);
               fetchGolfRounds()
             }}>
@@ -101,49 +110,32 @@ const Extension = ({ context }: any) => {
         ) : (
           <StatusTag variant="warning">No rounds recorded for {properties.firstname}. Record the first round to get started!</StatusTag>
         )}
-        <Divider />
         {renderGolfRoundForm()}
       </Flex>
     );
   }
 
+  if (showGolfRounds) {
+    return (
+      <Flex direction="column" align="start" gap="small">
+        <Button size="extra-small" onClick={() => setShowGolfRounds(false)} variant="secondary">
+          <Icon name="left" /> Back to handicap
+        </Button>
+        <GolfRounds golfRounds={golfRounds} showGolfRounds={showGolfRounds} />
+      </Flex>
+    )
+  }
+
   return (
-    <Flex direction="column" gap="medium">
+    <Flex direction="column" gap="small">
       <Handicap golfRounds={golfRounds} firstname={properties.firstname} />
       <Divider />
-      <Flex direction="row" gap="extra-small" justify="between" align="baseline">
-        <Heading>Golf Rounds</Heading>
-        <Text>Showing the last {golfRounds.length > 20 ? 20 : golfRounds.length} rounds played</Text>
+      <Flex direction="row" gap="small" justify="center" align="baseline">
+        {renderGolfRoundForm()}
+        <Button size="small" onClick={() => setShowGolfRounds(true)}>
+          <Icon name="view" /> View rounds
+        </Button>
       </Flex>
-      <Table bordered={true}>
-        <TableHead>
-          <TableRow>
-            <TableHeader>Course</TableHeader>
-            <TableHeader>Score</TableHeader>
-            <TableHeader>Holes</TableHeader>
-            <TableHeader>Date</TableHeader>
-            <TableHeader>Rating</TableHeader>
-            <TableHeader>Slope</TableHeader>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {golfRounds.slice(0, 20).map((round) => (
-            <TableRow key={round.id}>
-              <TableCell>{round.properties.course}</TableCell>
-              <TableCell>{round.properties.score}</TableCell>
-              <TableCell>{round.properties.holes || "N/A"}</TableCell>
-              <TableCell>
-                {round.properties.date
-                  ? new Date(round.properties.date).toLocaleDateString()
-                  : "N/A"}
-              </TableCell>
-              <TableCell>{round.properties.course_rating || "-"}</TableCell>
-              <TableCell>{round.properties.slope || "-"}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      {renderGolfRoundForm()}
     </Flex>
   );
 };

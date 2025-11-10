@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, Flex, Form, Input, DateInput, NumberInput, Select } from "@hubspot/ui-extensions";
+import { Box, Flex, Form, Input, DateInput, NumberInput, Select, LoadingButton } from "@hubspot/ui-extensions";
 import { GolfRoundProperties } from "./types";
 
 interface GolfRoundFormProps {
@@ -121,13 +121,15 @@ export const GolfRoundForm = ({ onSubmit, isSubmitting = false }: GolfRoundFormP
           max={155}
         />
         <Box>
-          <Button
+          <LoadingButton
             type="submit"
+            variant="primary"
             onClick={handleSubmit}
             disabled={!isValid || isSubmitting}
+            loading={isSubmitting}
           >
             {isSubmitting ? "Recording..." : "Record Round"}
-          </Button>
+          </LoadingButton>
         </Box>
       </Flex>
     </Form>

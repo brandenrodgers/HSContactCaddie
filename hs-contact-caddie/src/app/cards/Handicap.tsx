@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Flex, Text, Statistics, StatisticsItem, StatusTag } from "@hubspot/ui-extensions";
+import { Flex, Text, Statistics, StatisticsItem, StatusTag, Tag, Tooltip, Inline } from "@hubspot/ui-extensions";
 import { GolfRound } from "./types";
 
 const DEFAULT_SLOPE = 113; // This is the average slope rating for a golf course
@@ -87,6 +87,14 @@ export const Handicap = ({ golfRounds, firstname }: HandicapProps) => {
     )
   }
 
+  const renderHandicapTooltip = (content: string) => {
+    return (
+      <Tag variant="info" overlay={<Tooltip>{content}</Tooltip>}>
+        i
+      </Tag>
+    )
+  }
+
   if (!handicap) {
     return (
       <Flex direction="column" gap="small">
@@ -100,9 +108,12 @@ export const Handicap = ({ golfRounds, firstname }: HandicapProps) => {
       return (
         <Flex direction="column" gap="extra-small">
           {renderHandicap(`${renderPlayerName()} Initial Handicap`)}
-          <StatusTag variant="warning">
-            A minimum of 20 rounds must be recorded to calculate an official handicap.
-          </StatusTag>
+          <Inline>
+            <StatusTag variant="warning">
+              A minimum of 20 rounds must be recorded to calculate an official handicap.
+            </StatusTag>
+            {renderHandicapTooltip('An initial handicap is provided between rounds 5 and 20 to provide a starting point for fair competition.')}
+          </Inline>
         </Flex>
       );
     }
@@ -112,6 +123,7 @@ export const Handicap = ({ golfRounds, firstname }: HandicapProps) => {
         <StatusTag variant="warning">
           A minimum of 5 rounds must be recorded to calculate an initial handicap.
         </StatusTag>
+        {renderHandicapTooltip('An initial handicap is provided between rounds 5 and 20 to provide a starting point for fair competition.')}
       </Flex>
     );
   }
