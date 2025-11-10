@@ -29,6 +29,12 @@ const decodeHubSpotUri = (uri: string): string => {
 };
 
 export const validateRequestSignature = (req: NextApiRequest): boolean => {
+  // Always return true when running locally
+  const host = req.headers.host;
+  if (host?.includes('localhost') || process.env.NODE_ENV === 'development') {
+    return true;
+  }
+
   const signatureHeader = req.headers['x-hubspot-signature-v3'];
   const timestampHeader = req.headers['x-hubspot-request-timestamp'];
 
@@ -39,8 +45,7 @@ export const validateRequestSignature = (req: NextApiRequest): boolean => {
 
   try {
     // Construct the full URL, handling proxies (like Vercel) and local development
-    const protocol = req.headers['x-forwarded-proto'] || (req.headers.host?.includes('localhost') ? 'http' : 'https');
-    const host = req.headers.host;
+    const protocol = req.headers['x-forwarded-proto'] || (host?.includes('localhost') ? 'http' : 'https');
     const urlPath = req.url || '';
 
     // Extract hostname (without port) to match Express behavior in the docs example
