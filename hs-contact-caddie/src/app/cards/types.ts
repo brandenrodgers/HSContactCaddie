@@ -12,3 +12,9 @@ export interface GolfRound {
   id: string;
   properties: GolfRoundProperties;
 }
+
+export interface HandicapResult {
+  official: boolean;
+  initial: boolean;
+  handicap: number;
+}

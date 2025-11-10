@@ -26,11 +26,12 @@ const handleApiError = async (response: Response): Promise<string> => {
 }
 
 export const fetchContactGolfRounds = async (
+  fetchDomain: string,
   portalId: number,
   contactId: number
 ): Promise<GolfRound[]> => {
   const response = await hubspot.fetch(
-    `https://hs-contact-caddie.vercel.app/api/fetch-golf-rounds?portalId=${portalId}&contactId=${contactId}`,
+    `${fetchDomain}/api/fetch-golf-rounds?portalId=${portalId}&contactId=${contactId}`,
     {
       method: "GET",
     }
@@ -46,12 +47,13 @@ export const fetchContactGolfRounds = async (
 };
 
 export const createGolfRound = async (
+  fetchDomain: string,
   portalId: number,
   contactId: number,
   formData: GolfRoundProperties
 ): Promise<void> => {
   const response = await hubspot.fetch(
-    `https://hs-contact-caddie.vercel.app/api/create-golf-round?portalId=${portalId}&contactId=${contactId}`,
+    `${fetchDomain}/api/create-golf-round?portalId=${portalId}&contactId=${contactId}`,
     {
       method: "POST",
       body: {

@@ -1,7 +1,6 @@
 on:
   push:
-    branches-ignore:
-      - main
+    branches:
       - staging
     paths:
       - 'hs-contact-caddie/**'
@@ -16,8 +15,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: HubSpot Project Validation Action
-        uses: HubSpot/hubspot-project-actions/project-validate@v1.0.0
+      - name: HubSpot Project Action
+        uses: HubSpot/hubspot-project-actions@v1.0.0
         with:
           project_dir: hs-contact-caddie
           profile: staging
