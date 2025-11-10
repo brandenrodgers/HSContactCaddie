@@ -120,10 +120,12 @@ export const Handicap = ({ golfRounds, firstname }: HandicapProps) => {
     return (
       <Flex direction="column" gap="extra-small">
         {renderHandicap("Handicap Tracking Towards")}
-        <StatusTag variant="warning">
-          A minimum of 5 rounds must be recorded to calculate an initial handicap.
-        </StatusTag>
-        {renderHandicapTooltip('An initial handicap is provided between rounds 5 and 20 to provide a starting point for fair competition.')}
+        <Inline>
+          <StatusTag variant="warning">
+            A minimum of 5 rounds must be recorded to calculate an initial handicap.
+          </StatusTag>
+          {renderHandicapTooltip('An initial handicap provides a starting point for fair competition.')}
+        </Inline>
       </Flex>
     );
   }
