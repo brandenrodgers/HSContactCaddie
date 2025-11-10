@@ -1,5 +1,5 @@
 {
   "proxy": {
-    "https://hs-contact-caddie.vercel.app": "http://localhost:3000"
+    "https://hs-contact-caddie-git-staging-contact-caddies.vercel.app": "http://localhost:3000"
   }
 }

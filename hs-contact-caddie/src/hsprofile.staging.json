@@ -2,7 +2,8 @@
   "accountId": 50690680,
   "variables": {
     "ENV": "staging",
-    "DOMAIN": "https://hs-contact-caddie-git-staging-contact-caddies.vercel.app",
+    "REDIRECT_DOMAIN": "https://hs-contact-caddie-git-staging-contact-caddies.vercel.app",
+    "FETCH_DOMAIN": "https://hs-contact-caddie-git-staging-contact-caddies.vercel.app",
     "GOLF_ROUND_OBJECT_PREFIX": "a23798001"
   }
 }

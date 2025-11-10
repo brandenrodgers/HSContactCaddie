@@ -35,6 +35,7 @@ const Extension = ({ actions, context }: any) => {
 
   const contactId = context.crm.objectId;
   const portalId = context.portal.id;
+  const fetchDomain = context.variables.FETCH_DOMAIN;
 
   useEffect(() => {
     fetchGolfRounds();
@@ -43,7 +44,7 @@ const Extension = ({ actions, context }: any) => {
   const fetchGolfRounds = async () => {
     try {
       setError(null);
-      const rounds = await fetchContactGolfRounds(portalId, contactId);
+      const rounds = await fetchContactGolfRounds(fetchDomain, portalId, contactId);
       setGolfRounds(rounds);
     } catch (err) {
       setError(err.message);
@@ -56,7 +57,7 @@ const Extension = ({ actions, context }: any) => {
     try {
       setCreateError(null);
       setIsSubmitting(true);
-      await createGolfRound(portalId, contactId, formData);
+      await createGolfRound(fetchDomain,portalId, contactId, formData);
       await fetchGolfRounds();
     } catch (err) {
       setCreateError(err.message);
