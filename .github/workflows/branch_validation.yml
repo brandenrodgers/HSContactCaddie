@@ -2,12 +2,13 @@ on:
   push:
     branches-ignore:
       - main
+      - staging
     paths:
       - 'hs-contact-caddie/**'
       - '.github/workflows/**'
 env:
-  DEFAULT_ACCOUNT_ID: ${{ secrets.HUBSPOT_ACCOUNT_ID }}
-  DEFAULT_PERSONAL_ACCESS_KEY: ${{ secrets.HUBSPOT_PERSONAL_ACCESS_KEY }}
+  DEFAULT_ACCOUNT_ID: ${{ secrets.HUBSPOT_STAGING_ACCOUNT_ID }}
+  DEFAULT_PERSONAL_ACCESS_KEY: ${{ secrets.HUBSPOT_STAGING_PERSONAL_ACCESS_KEY }}
   DEFAULT_CLI_VERSION: 7.8.0
 jobs:
   deploy:
@@ -19,5 +20,5 @@ jobs:
         uses: HubSpot/hubspot-project-actions/project-validate@v1.0.0
         with:
           project_dir: hs-contact-caddie
-          profile: prod
+          profile: staging
 
