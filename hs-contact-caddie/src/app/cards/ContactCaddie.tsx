@@ -74,7 +74,7 @@ const Extension = ({ actions, context }: any) => {
         size="small"
         variant="primary"
         overlay={
-          <Modal id={CREATE_GOLF_ROUND_MODAL_ID} title={`New golf round for ${properties.firstname}`} width="md">
+          <Modal id={CREATE_GOLF_ROUND_MODAL_ID} title={`Recording a new golf round for ${properties.firstname}`} width="md">
             <ModalBody>
               <Flex direction="column" align="start" gap="medium">
                 <GolfRoundForm onSubmit={handleCreateGolfRound} isSubmitting={isSubmitting} firstname={properties.firstname} />
