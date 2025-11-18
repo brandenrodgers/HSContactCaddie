@@ -11,6 +11,7 @@ import {
   Tab,
   LineChart,
   Flex,
+  Button,
 } from "@hubspot/ui-extensions";
 import { CrmActionButton } from '@hubspot/ui-extensions/crm';
 import { GolfRound } from "./types";
@@ -26,6 +27,10 @@ export const GolfRounds = ({ golfRounds, showGolfRounds, golfRoundObjectTypeId }
         Score: parseInt(properties.score as unknown as string)
       }
     });
+  }
+
+  const handleDeleteGolfRound = (roundId: string) => {
+    console.log('deleting golf round', roundId);
   }
 
   const renderGolfRoundsCountLabel = () => {
@@ -46,7 +51,7 @@ export const GolfRounds = ({ golfRounds, showGolfRounds, golfRoundObjectTypeId }
               <TableHeader>Date</TableHeader>
               <TableHeader>Rating</TableHeader>
               <TableHeader>Slope</TableHeader>
-              <TableHeader>Record link</TableHeader>
+              <TableHeader>Actions</TableHeader>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -63,18 +68,23 @@ export const GolfRounds = ({ golfRounds, showGolfRounds, golfRoundObjectTypeId }
                 <TableCell>{round.properties.course_rating || "-"}</TableCell>
                 <TableCell>{round.properties.slope || "-"}</TableCell>
                 <TableCell>
-                <CrmActionButton
-                  actionType="RECORD_APP_LINK"
-                  actionContext={{
-                    objectTypeId: golfRoundObjectTypeId,
-                    objectId: round.id,
-                    includeEschref: true,
-                  }}
-                  size="extra-small"
-                  variant="secondary"
-                >
-                  View round
-                </CrmActionButton>
+                  <Flex gap="medium">
+                    <CrmActionButton
+                      actionType="RECORD_APP_LINK"
+                      actionContext={{
+                        objectTypeId: golfRoundObjectTypeId,
+                        objectId: round.id,
+                        includeEschref: true,
+                      }}
+                      size="extra-small"
+                      variant="secondary"
+                    >
+                      View
+                    </CrmActionButton>
+                    <Button size="extra-small" variant="destructive" onClick={() => handleDeleteGolfRound(round.id)}>
+                      Delete
+                    </Button>
+                  </Flex>
                 </TableCell>
               </TableRow>
             ))}
