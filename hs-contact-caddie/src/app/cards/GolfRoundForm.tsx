@@ -24,9 +24,11 @@ export const GolfRoundForm = ({ onSubmit, isSubmitting = false, firstname }: Gol
 
   const convertDateToString = (dateValue: DateValue): string => {
     const year = dateValue.year;
-    const month = String(dateValue.month).padStart(2, '0');
+    // DateInput returns month as 0-11 (0 = January), so add 1 to get 1-12
+    const month = String(dateValue.month + 1).padStart(2, '0');
     const day = String(dateValue.date).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    const result = `${year}-${month}-${day}`;
+    return result;
   };
 
   const handleSubmit = () => {
@@ -34,10 +36,18 @@ export const GolfRoundForm = ({ onSubmit, isSubmitting = false, firstname }: Gol
       return;
     }
 
+    // Validate date values (month can be 0 for January, so check for undefined/null instead)
+    if (!date.year || date.month === undefined || date.month === null || !date.date) {
+      console.error('Invalid date value:', date);
+      return;
+    }
+
+    const dateString = convertDateToString(date);
+
     onSubmit({
       course,
       score,
-      date: convertDateToString(date),
+      date: dateString,
       holes,
       slope,
       course_rating: courseRating,
