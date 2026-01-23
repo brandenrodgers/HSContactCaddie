@@ -68,10 +68,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     console.log('✅ HubSpot client authenticated successfully');
 
     // Create golf round with properly formatted properties
+    // Convert date string to timestamp in milliseconds
+    // The date comes in format YYYY-MM-DD, parse it at midnight UTC
+    const parsedDate = new Date(date);
+
+    // Check if date parsing was successful
+    if (isNaN(parsedDate.getTime())) {
+      console.log('❌ Invalid date format:', date);
+      return res.status(400).json({
+        error: `Invalid date format: ${date}. Expected format: YYYY-MM-DD`,
+      });
+    }
+
+    const dateTimestamp = parsedDate.getTime().toString();
+    console.log('📅 Date conversion:', { input: date, parsed: parsedDate.toISOString(), timestamp: dateTimestamp });
+
     const propertiesData: Record<string, string> = {
       course,
       score: score.toString(),
-      date,
+      date: dateTimestamp,
       holes,
     };
 

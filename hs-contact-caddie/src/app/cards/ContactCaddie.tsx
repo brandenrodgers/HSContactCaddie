@@ -10,10 +10,15 @@ import {
   ModalBody,
   Icon,
   StatusTag,
+  Box,
+  Text,
+  Heading,
+  EmptyState,
+  Alert,
 } from "@hubspot/ui-extensions";
 import { useCrmProperties } from "@hubspot/ui-extensions/crm";
 import { GolfRoundForm } from "./GolfRoundForm";
-import { fetchContactGolfRounds, createGolfRound } from "./api";
+import { fetchContactGolfRounds, createGolfRound, deleteGolfRound } from "./api";
 import { GolfRound, GolfRoundProperties } from "./types";
 import { Handicap } from './Handicap';
 import { GolfRounds } from './GolfRounds';
@@ -31,6 +36,7 @@ const Extension = ({ actions, context }: any) => {
   const [error, setError] = useState<string | null>(null);
   const [createError, setCreateError] = useState<string | null>(null);
   const [showGolfRounds, setShowGolfRounds] = useState(false);
+  const [isDeletingRound, setIsDeletingRound] = useState<string | null>(null);
   const { properties, isLoading: isLoadingProperties } = useCrmProperties(['firstname']);
 
   const contactId = context.crm.objectId;
@@ -68,76 +74,119 @@ const Extension = ({ actions, context }: any) => {
     }
   };
 
+  const handleDeleteGolfRound = async (roundId: string) => {
+    try {
+      setIsDeletingRound(roundId);
+      await deleteGolfRound(fetchDomain, portalId, roundId);
+      await fetchGolfRounds();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsDeletingRound(null);
+    }
+  };
+
   const renderGolfRoundForm = () => {
     return (
       <Button
-        size="small"
+        size="medium"
         variant="primary"
         overlay={
           <Modal id={CREATE_GOLF_ROUND_MODAL_ID} title={`Recording a new golf round for ${properties.firstname}`} width="md">
             <ModalBody>
               <Flex direction="column" align="start" gap="medium">
+                {createError && (
+                  <Alert title="Error creating round" variant="error">
+                    {createError}
+                  </Alert>
+                )}
                 <GolfRoundForm onSubmit={handleCreateGolfRound} isSubmitting={isSubmitting} firstname={properties.firstname} />
-                {createError && <StatusTag variant="danger">{createError}</StatusTag>}
               </Flex>
             </ModalBody>
           </Modal>
         }
       >
-        <Icon name="edit" /> Record a new round
+        <Icon name="add" /> Record a new round
       </Button>
     );
   };
 
   if (loading || isLoadingProperties) {
     return (
-      <Flex direction="column" align="center" gap="medium">
-        <LoadingSpinner label="Loading golf rounds..." />
-      </Flex>
+      <Box>
+        <Flex direction="column" align="center" justify="center" gap="medium">
+          <LoadingSpinner label="Loading golf rounds..." />
+          <Text format={{ fontWeight: "demibold" }}>
+            Fetching {properties.firstname ? `${properties.firstname}'s` : 'golf'} rounds...
+          </Text>
+        </Flex>
+      </Box>
     );
   }
 
   if (golfRounds.length === 0) {
     return (
-      <Flex direction="column" align="center" gap="medium">
+      <Box>
         {error ? (
-          <ErrorState title="Trouble fetching golf rounds" type="error">
-            <Button size="small" onClick={() => {
-              setLoading(true);
-              fetchGolfRounds()
-            }}>
-              Try reloading rounds
-            </Button>
-          </ErrorState>
+          <Flex direction="column" gap="medium">
+            <ErrorState title="Trouble fetching golf rounds" type="error">
+              <Text>We encountered an issue loading the golf rounds. Please try again.</Text>
+              <Button size="medium" onClick={() => {
+                setLoading(true);
+                fetchGolfRounds()
+              }}>
+                <Icon name="retry" /> Retry
+              </Button>
+            </ErrorState>
+          </Flex>
         ) : (
-          <StatusTag variant="warning">No rounds recorded for {properties.firstname}. Record the first round to get started!</StatusTag>
+          <EmptyState
+            title={`Start tracking ${properties.firstname ? `${properties.firstname}'s` : 'golf'} rounds!`}
+            layout="vertical"
+          >
+            <Flex direction="column" align="center" gap="medium">
+              <Text>
+                <Icon name="star" /> No rounds recorded yet. Record the first round to start tracking handicap and performance!
+              </Text>
+              {renderGolfRoundForm()}
+            </Flex>
+          </EmptyState>
         )}
-        {renderGolfRoundForm()}
-      </Flex>
+      </Box>
     );
   }
 
   if (showGolfRounds) {
     return (
-      <Flex direction="column" align="start" gap="small">
-        <Button size="extra-small" onClick={() => setShowGolfRounds(false)} variant="secondary">
-          <Icon name="left" /> Back to handicap
-        </Button>
-        <GolfRounds golfRounds={golfRounds} showGolfRounds={showGolfRounds} golfRoundObjectTypeId={golfRoundObjectTypeId} />
-      </Flex>
+      <Box>
+        <Flex direction="column" align="start" gap="medium">
+          <Button size="small" onClick={() => setShowGolfRounds(false)} variant="secondary">
+            <Icon name="left" /> Back to handicap
+          </Button>
+          <GolfRounds
+            golfRounds={golfRounds}
+            showGolfRounds={showGolfRounds}
+            golfRoundObjectTypeId={golfRoundObjectTypeId}
+            onDeleteRound={handleDeleteGolfRound}
+            isDeletingRound={isDeletingRound}
+          />
+        </Flex>
+      </Box>
     )
   }
 
   return (
-    <Flex direction="column" gap="small">
-      <Handicap golfRounds={golfRounds} firstname={properties.firstname} />
-      <Divider />
-      <Flex direction="row" gap="small" justify="center" align="baseline">
-        {renderGolfRoundForm()}
-        <Button size="small" onClick={() => setShowGolfRounds(true)}>
-          <Icon name="view" /> View rounds
-        </Button>
+    <Box>
+      <Flex direction="column" gap="medium">
+        <Handicap golfRounds={golfRounds} firstname={properties.firstname} />
+        <Divider />
+        <Flex direction="row" gap="medium" justify="center" align="baseline" wrap="wrap">
+          {renderGolfRoundForm()}
+          <Button size="medium" onClick={() => setShowGolfRounds(true)} variant="secondary">
+            <Icon name="view" /> View all rounds
+          </Button>
+        </Flex>
       </Flex>
-    </Flex>
+    </Box>
   );
 };

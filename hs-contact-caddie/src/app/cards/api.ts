@@ -73,3 +73,21 @@ export const createGolfRound = async (
   }
 };
 
+export const deleteGolfRound = async (
+  fetchDomain: string,
+  portalId: number,
+  roundId: string
+): Promise<void> => {
+  const response = await hubspot.fetch(
+    `${fetchDomain}/api/delete-golf-round?portalId=${portalId}&roundId=${roundId}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  if (!response.ok) {
+    const errorMessage = await handleApiError(response);
+    throw new Error(`Failed to delete golf round: ${errorMessage}`);
+  }
+};
+
